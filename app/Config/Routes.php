@@ -11,6 +11,10 @@ $routes->get('/Home', 'Home::showDashboard');
 $routes->get('/Campaigns', 'Home::showCampagins');
 $routes->get('/displayCreateCampaign', 'Home::displayCreateCampaign');
 $routes->post('/createCampaign', 'Home::createCampaign');
+$routes->get('/DeleteCampaign/(:any)', 'Home::deleteCampaign/$1');
+$routes->get('/displayUpdateCampaign/(:any)', 'Home::displayUpdateCampaign/$1');
+$routes->post('/updateCampaign/(:any)', 'Home::updateCampaign/$1');
+
 //process
 $routes->get('/Process/(:any)', 'Home::displayProcess/$1');
 $routes->get('/displayCreateProcess/(:any)', 'Home::displayCreateProcess/$1');

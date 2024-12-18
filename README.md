@@ -72,3 +72,5 @@ Additionally, make sure that the following extensions are enabled in your PHP:
 //bootstrap templartes for jay
 - https://startbootstrap.com/templates/ecommerce
 - https://themewagon.com/themes/kaira/
+
+         <li><a class="dropdown-item" href="/DeleteUser/<?php echo $user->id ?>">Delete</a></li>

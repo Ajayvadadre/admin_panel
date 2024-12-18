@@ -21,7 +21,8 @@ class UserModel extends Model
     public function DeleteUser($id){
         $this->delete($id);
     }
-    public function UpdateUser($id) {
-        $this->update($id);
+    public function UpdateUser($id,$data) {
+       $data=  $this->update($id,$data);
+       return $data;
     }
 }

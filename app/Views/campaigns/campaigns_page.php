@@ -82,10 +82,9 @@
                                                 <i class="fas fa-cog text-dark"></i>
                                             </button>
                                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <li><a class="dropdown-item" href="#">Update</a></li>
-                                                <li><a class="dropdown-item" href="#">Dispose</a></li>
-                                                <li><a class="dropdown-item" href="#">Pause Reason</a></li>
-                                                <li><a class="dropdown-item" href="/Campaigns">Delete</a></li>
+                                                <li><a class="dropdown-item" href="/displayUpdateCampaign/<?php echo $campaigns['id'] ?>">Update</a></li>
+                                
+                                                <li><a class="dropdown-item" style="cursor: pointer;" onclick="if (confirm('Are you sure you want to delete this user?')) { location.replace('/DeleteCampaign/<?php echo $campaigns['id']?>'); }">Delete</a></li>
                                             </ul>
                                         </div>
                                     </td>

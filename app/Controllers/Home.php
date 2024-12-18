@@ -132,7 +132,7 @@ class Home extends BaseController
         $this->user->DeleteUser($id);
         return redirect()->to('/Users');
     }
-    public function UpdateUser($id)
+    public function UpdateUser($id) 
     {
         $Firstname = $this->request->getVar('Firstname');
         $Lastname = $this->request->getVar('Lastname');
@@ -146,9 +146,10 @@ class Home extends BaseController
             "Password" => $Password,
             "Accesslevel" => $Accesslevel
         ];
-        $this->user->update($id, $data);
-        // $this->user->UpdateUser($id);
-        return redirect()->to('/Users');
+        $this->user->UpdateUser($id, $data);
+        if($data){
+            return redirect()->to('/Users');
+        }
     }
     public function displayUpdateUser($id)
     {
@@ -158,5 +159,37 @@ class Home extends BaseController
         echo view('/inc/header');
         echo view('users/updateusers_page', ['userData' => $userData]);
         echo view('/inc/footer');
+    }
+    public function displayUpdateCampaign($id)  
+    {
+
+        $userData = $this->campaign->find($id);
+
+        echo view('/inc/header');
+        echo view('campaigns/updatecampaign_page', ['userData' => $userData]);
+        echo view('/inc/footer');
+    }
+    public function deleteCampaign($id)
+    {
+        
+        $this->campaign->DeleteCampaign($id);
+        return redirect()->to('/Campaigns');
+    }
+    public function UpdateCampaign($id) 
+    {
+        $name = $this->request->getVar('name');
+        $description = $this->request->getVar('description');
+        $client = $this->request->getVar('client');
+        $supervisor = $this->request->getVar('supervisor');
+        $data = [
+            "name" => $name,
+            "description" => $description,
+            "client" => $client,
+            "supervisor" => $supervisor
+        ];
+        $this->campaign->UpdateCampaign($id, $data);
+        if($data){
+            return redirect()->to('/Campaigns');
+        }
     }
 }

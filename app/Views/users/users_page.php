@@ -66,7 +66,7 @@
                                         <p class="fw-normal mb-1"><?php echo $user->Lastname ?></p>
                                     </td>
                                     <td><?php echo $user->Username ?></td>
-                                    <td><?php  echo  $user->accessname  ?></td>
+                                    <td><?php echo  $user->accessname  ?></td>
 
                                     <td>
                                         <span class="badge badge-success rounded-pill d-inline">Active</span>
@@ -85,7 +85,8 @@
                                             </button>
                                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                 <li><a class="dropdown-item" href="/displayUpdateUsers/<?php echo $user->id ?>">Update</a></li>
-                                                <li><a class="dropdown-item" href="/DeleteUser/<?php echo $user->id ?>">Delete</a></li>
+
+                                                <li><a class="dropdown-item" style="cursor: pointer;" onclick="if (confirm('Are you sure you want to delete this user?')) { location.replace('/DeleteUser/<?php echo $user->id ?>'); }">Delete</a></li>
                                             </ul>
                                         </div>
                                     </td>
