@@ -96,7 +96,7 @@ Topics:
 - Call event service is responsible for merging agents and customer call on the basis of channel.
 - Calling API's also changes the state of the agent.
 - Note: This are required for making media query commands or else it wont perform it.
-        - agent reference UID
+        - agent reference UID   
         - customer UID
         - remote call UID 
 
@@ -125,9 +125,35 @@ Topics:
         - 2: other Team- If other Team is selected agent is shown agents from another campaigns process.This option is only available if configed in campaign button settings. 
         - 3: external transfer- If external transfer agent can add external number in input the call has to transfer to. 
         
-- ->Agent->Transfer button->chat server->preCallHandler gets all agents data-> calls Calling API->State of the agent is set to transfer start->
-- Agents are shown based on the conditions set for that process->
-- 
+#When agent clicks transfer button:
+->Agent->Transfer button->chat server->preCallHandler gets all agents data-> calls Calling API transfer start API->Media query->initiates cuuid_dual_transfer command->State of the agent is set to transfer start and customer is send to valet(park state).
+
+- Agents are shown based on the conditions set for that process->selects the ready agents->request send to Agent2->Agent2 gets a notification->selects Accept or cancel-> if Accepts->sets global variable in Agent1->States changes to transfer talk.
+
+-Agent1 gets 3 option: 1-Transfer Talk 
+                       2-Conference call
+                       3-Cancel
+
+                       1-Transfer Talk: 
+                                - If agent1 selects this option->request to chat server->preCallHandler->Calling API's performs originate commnand->
+                                        - If web: -site url is set inside the command
+                                                  -directly connects to the call
+                                        - If OnDemand: -UUID is set inside the command
+                                                       -Calls Agent2->Agent state to calling->connects
+                       2-Conference call:
+                                -If agent1 selects this option->chat server->precall handler->callingAPI with all data->Initiates conference command (combines 3legs -A1+A2+Customer)->Sets A1,A2 to call state->A1,A2,Customer merges.
+                                -If agent1 disposes call-> states of A1,A2 set to dispose.
+                       3-Cancel: 
+                                -If clicks Cancel->gets A1,A2,Customer data from session->Precall handler->Calling API's->Checks if Bridge or Demand->
+                                        -If bridge->remoteAgentTransferCancel command called->sends agent to park and state to dispose->A2 state to ready
+                                        -If web/Ondemand-> handupAPI with uui_kill command is performed and agent set to dispose state.
+                       - Agent2 has Leave conference button->if clicked->self kill command->if bridge(park uuid),if web conference leave API is initiated.
+
+
+
+#DTMF buttons: This are the buttons that are shown to agents panel in which API's called according to numbers selected
+                - send DTMF->preCallHandler->CallingAPI->Sends DTMF
+
 
 - Call disconnect button: 
                   - Call disconnect button while clicked->checks mode of call
