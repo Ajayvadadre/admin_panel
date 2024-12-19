@@ -30,23 +30,28 @@
                 <div class="details">
                     <div class="name-details d-flex flex-column">
                         <label for="Firstname">First name:</label>
-                        <input name="Firstname" type="text">
+                        <input name="Firstname" required type="text">
                     </div>
                     <div class="name-details d-flex flex-column mt-4">
                         <label for="Lastname">Last name:</label>
-                        <input name="Lastname" type="text">
+                        <input name="Lastname" required type="text">
                     </div>
                     <div class="name-details d-flex flex-column mt-4">
                         <label for="Username">Username:</label>
-                        <input name="Username" type="text">
+                        <input name="Username" required type="text">
+                        <?php if (session()->getFlashdata('sameUsername')) { ?>
+                            <div>
+                                <h6 class="text-danger mt-1"><?php echo  session()->getFlashdata('sameUsername'); ?></h6>
+                            </div>
+                        <?php } ?>
                     </div>
                     <div class="name-details d-flex flex-column mt-4">
                         <label for="Password">Password:</label>
-                        <input name="Password" type="password">
+                        <input name="Password" required type="password">
                     </div>
                     <div class="name-details d-flex flex-column mt-4">
                         <label for="Accesslevel">Access level:</label>
-                        <select class="form-select" name="Accesslevel" aria-label="Default select example">
+                        <select class="form-select" required name="Accesslevel" aria-label="Default select example">
                             <option class=" font-weight-bold" selected>Select access level</option>
                             <option value="1">Admin</option>
                             <option value="2">Supervisor</option>
@@ -63,4 +68,3 @@
         </div>
     </div>
 </div>
-

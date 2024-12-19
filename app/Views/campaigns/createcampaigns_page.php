@@ -31,6 +31,11 @@
                     <div class="name-details d-flex flex-column">
                         <label for="name">Name:</label>
                         <input name="name" type="text">
+                        <?php if (session()->getFlashdata('sameCampaignError')) { ?>
+                            <div>
+                                <h6 class="text-danger mt-1"><?php echo session()->getFlashdata('sameCampaignError'); ?></h6>
+                            </div>
+                        <?php } ?>
                     </div>
                     <div class="name-details d-flex flex-column mt-4">
                         <label for="description">Description:</label>
@@ -47,7 +52,7 @@
                 </div>
                 <div class="saveDetails w-100 mt-5">
                     <button type="submit" class="btn btn-primary">Save</button>
-                    <a href="/Home" class="btn btn-light ml-2">cancel</a>
+                    <a href="/Campaigns" class="btn btn-light ml-2">cancel</a>
                 </div>
             </form>
         </div>

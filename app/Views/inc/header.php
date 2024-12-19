@@ -93,7 +93,7 @@
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <li><a class="dropdown-item" href="/Users">Users</a></li>
                                 <li><a class="dropdown-item" href="/Campaigns">Campaigns</a></li>
-                                <li><a class="dropdown-item" href="/Campaigns">Access level</a></li>
+                                <!-- <li><a class="dropdown-item" href="/Campaigns">Access level</a></li> -->
                                 <li><a class="dropdown-item" href="#">Chat</a></li>
                             </ul>
                         </div>

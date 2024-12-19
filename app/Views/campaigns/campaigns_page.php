@@ -50,7 +50,7 @@
                     </thead>
                     <tbody>
                         <?php
-                        if ($all_campaigns) {
+                        if ($data['all_campaigns']) {
                             foreach ($all_campaigns as $campaigns) {
                         ?>
                                 <tr>

@@ -32,15 +32,14 @@ class Home extends BaseController
     public function showCampagins()
     {
         $all_campaigns = $this->campaign->findAll();
-        echo view('/inc/header');
-        echo view('/campaigns/campaigns_page', ['all_campaigns' => $all_campaigns]);
-        echo view('/inc/footer');
+        $data['page'] = '/campaigns/campaigns_page';
+        $data['data'] =  ['all_campaigns' => $all_campaigns];
+        echo view('/inc/template', $data);
     }
     public function displayCreateCampaign()
     {
-        echo view('/inc/header');
-        echo view('/campaigns/createcampaigns_page');
-        echo view('/inc/footer');
+        $data['page'] = '/campaigns/createcampaigns_page';
+        echo view('/inc/template', $data);
     }
     public function createCampaign()
     {
@@ -49,32 +48,33 @@ class Home extends BaseController
         $client = $this->request->getVar('client');
         $supervisor = $this->request->getVar('supervisor');
 
-        $this->campaign->save([
-            "name" => $name,
-            "description" => $description,
-            "client" => $client,
-            "supervisor" => $supervisor
-        ]);
+        $checkCampaign = $this->campaign->where('name', $name)->first();
+
+        if ($checkCampaign) {
+            session()->setFlashData("sameCampaignError", "Campaign Name already exists");
+            return   redirect()->to('/displayCreateCampaign');
+        } else {
+            $this->campaign->save([
+                "name" => $name,
+                "description" => $description,
+                "client" => $client,
+                "supervisor" => $supervisor
+            ]);
+        }
 
         return redirect()->to('/Campaigns');
     }
     public function displayProcess($id)
     {
 
-        // $data['page'] = 
-
-        echo view('/inc/header');
-        echo view('/process/process_page', ['all_process' => null]);
-        echo view('/inc/footer');
+        $data['data'] =  ['all_process' => null];
+        $data['page'] = '/process/process_page';
+        echo view('/inc/template', $data);
     }
     public function displayCreateProcess($id)
     {
-
-
-
-        echo view('/inc/header');
-        echo view('/process/createprocess_page');
-        echo view('/inc/footer');
+        $data['page'] = '/process/createprocess_page';
+        echo view('/inc/template', $data);
     }
     public function createProcess()
     {
@@ -99,15 +99,18 @@ class Home extends BaseController
         $resultTable = $db->query($query);
         $all_users = $this->user->findAll();
         $accessLevels = $this->accessLevel->getAccessLevels();
-        echo view('/inc/header');
-        echo view('users/users_page', ['all_users' => $resultTable->getResult()]);
-        echo view('/inc/footer');
+        // echo view('/inc/header');
+        // echo view('users/users_page', ['all_users' => $resultTable->getResult()]);
+        // echo view('/inc/footer');
+
+        $data['data'] =  ['all_users' => $resultTable->getResult()];
+        $data['page'] = 'users/users_page';
+        echo view('/inc/template', $data);
     }
     public function displayCreateUsers()
     {
-        echo view('/inc/header');
-        echo view('users/createusers_page');
-        echo view('/inc/footer');
+        $data['page'] = 'users/createusers_page';
+        echo view('/inc/template', $data);
     }
     public function createUser()
     {
@@ -117,13 +120,20 @@ class Home extends BaseController
         $Password = $this->request->getVar('Password');
         $Accesslevel = $this->request->getVar('Accesslevel');
 
-        $this->user->save([
-            "Firstname" => $Firstname,
-            "Lastname" => $Lastname,
-            "Username" => $Username,
-            "Password" => $Password,
-            "Accesslevel" => $Accesslevel
-        ]);
+        $checkUser = $this->user->where('Username', $Username)->first();
+
+        if ($checkUser) {
+            session()->setFlashdata('sameUsername', 'Username already exists');
+            return redirect()->to('/displayCreateUsers');
+        } else {
+            $this->user->save([
+                "Firstname" => $Firstname,
+                "Lastname" => $Lastname,
+                "Username" => $Username,
+                "Password" => $Password,
+                "Accesslevel" => $Accesslevel
+            ]);
+        }
 
         return redirect()->to('/Users');
     }
@@ -132,7 +142,7 @@ class Home extends BaseController
         $this->user->DeleteUser($id);
         return redirect()->to('/Users');
     }
-    public function UpdateUser($id) 
+    public function UpdateUser($id)
     {
         $Firstname = $this->request->getVar('Firstname');
         $Lastname = $this->request->getVar('Lastname');
@@ -147,7 +157,7 @@ class Home extends BaseController
             "Accesslevel" => $Accesslevel
         ];
         $this->user->UpdateUser($id, $data);
-        if($data){
+        if ($data) {
             return redirect()->to('/Users');
         }
     }
@@ -156,26 +166,25 @@ class Home extends BaseController
 
         $userData = $this->user->find($id);
 
-        echo view('/inc/header');
-        echo view('users/updateusers_page', ['userData' => $userData]);
-        echo view('/inc/footer');
+
+        $data['page'] = 'users/createusers_page';
+        $data['data'] =  ['userData' => $userData];
+        echo view('/inc/template', $data);
     }
-    public function displayUpdateCampaign($id)  
+    public function displayUpdateCampaign($id)
     {
-
         $userData = $this->campaign->find($id);
-
-        echo view('/inc/header');
-        echo view('campaigns/updatecampaign_page', ['userData' => $userData]);
-        echo view('/inc/footer');
+        $data['page'] = 'campaigns/updatecampaign_page';
+        $data['data'] =  ['userData' => $userData];
+        echo view('/inc/template', $data);
     }
     public function deleteCampaign($id)
     {
-        
+
         $this->campaign->DeleteCampaign($id);
         return redirect()->to('/Campaigns');
     }
-    public function UpdateCampaign($id) 
+    public function UpdateCampaign($id)
     {
         $name = $this->request->getVar('name');
         $description = $this->request->getVar('description');
@@ -188,7 +197,7 @@ class Home extends BaseController
             "supervisor" => $supervisor
         ];
         $this->campaign->UpdateCampaign($id, $data);
-        if($data){
+        if ($data) {
             return redirect()->to('/Campaigns');
         }
     }
