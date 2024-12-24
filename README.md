@@ -77,7 +77,7 @@ Additionally, make sure that the following extensions are enabled in your PHP:
 
 
 ----------------------------------------
-//19-12-2024
+//19-12-2024 Training session 
 
 Topics: 
 1: Calling API

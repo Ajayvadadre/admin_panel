@@ -24,7 +24,7 @@
             <form action="/createUser" method="post">
                 <div class="header d-flex justify-content-between">
                     <h4 class="mb-4">Create users </h4>
-                    <a href="/createCampaign" class="">
+                    <a href="/testController/" class="">
                     </a>
                 </div>
                 <div class="details">

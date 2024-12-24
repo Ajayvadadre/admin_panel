@@ -29,13 +29,6 @@ class Home extends BaseController
         echo view('/home');
         echo view('/inc/footer');
     }
-    public function showCampagins()
-    {
-        $all_campaigns = $this->campaign->findAll();
-        $data['page'] = '/campaigns/campaigns_page';
-        $data['data'] =  ['all_campaigns' => $all_campaigns];
-        echo view('/inc/template', $data);
-    }
     public function displayCreateCampaign()
     {
         $data['page'] = '/campaigns/createcampaigns_page';
@@ -94,17 +87,35 @@ class Home extends BaseController
     }
     public function showUsers()
     {
-        $db = \Config\Database::connect();
-        $query = 'select *, ( select roles from accesslevel where accesslevel.id = users.Accesslevel ) as accessname from users;';
-        $resultTable = $db->query($query);
-        $all_users = $this->user->findAll();
-        $accessLevels = $this->accessLevel->getAccessLevels();
-        // echo view('/inc/header');
-        // echo view('users/users_page', ['all_users' => $resultTable->getResult()]);
-        // echo view('/inc/footer');
+        // $db = \Config\Database::connect();
+        // $query = 'select *, ( select roles from accesslevel where accesslevel.id = users.Accesslevel ) as accessname from users;';
+        // $resultTable = $db->query($query);
 
-        $data['data'] =  ['all_users' => $resultTable->getResult()];
+        $all_users = $this->user->paginate(3);
+        $pagerData = $this->user->pager;
+        $accessLevel = $this->accessLevel->find();
+        $state = $this->request->getGet('state');
+
+        if ($state) {
+            $all_users = $this->user->where('Accesslevel',$state)->paginate(3);
+            $data['pager'] = ['pager' => $pagerData];
+            $data['page'] = 'users/users_page';
+            $data['data'] =  ['all_users' => $all_users, 'accesslevel' => $accessLevel];
+        }
+        $data['pager'] = ['pager' => $pagerData];
         $data['page'] = 'users/users_page';
+        $data['data'] =  ['all_users' => $all_users, 'accesslevel' => $accessLevel];
+        echo view('/inc/template', $data);
+        // $all_users = $this->user->findAll();
+        // $accessLevels = $this->accessLevel->getAccessLevels();
+    }
+    public function showCampagins()
+    {
+        $all_campaigns = $this->campaign->paginate(4);
+        $pagerData = $this->campaign->pager;
+        $data['pager'] = ['pager' => $pagerData];
+        $data['page'] = '/campaigns/campaigns_page';
+        $data['data'] =  ['all_campaigns' => $all_campaigns];
         echo view('/inc/template', $data);
     }
     public function displayCreateUsers()

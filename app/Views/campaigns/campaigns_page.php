@@ -25,6 +25,13 @@
         /*Without this, clicking will make it sticky*/
         pointer-events: none;
     }
+
+    .pagination li {
+        /* border: 2px solid #f0eeee; */
+        padding: 8px;
+        /* border-radius: 100px; */
+        margin-left: 10px;
+    }
 </style>
 
 <div class="container-fluid table-container">
@@ -83,8 +90,8 @@
                                             </button>
                                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                 <li><a class="dropdown-item" href="/displayUpdateCampaign/<?php echo $campaigns['id'] ?>">Update</a></li>
-                                
-                                                <li><a class="dropdown-item" style="cursor: pointer;" onclick="if (confirm('Are you sure you want to delete this user?')) { location.replace('/DeleteCampaign/<?php echo $campaigns['id']?>'); }">Delete</a></li>
+
+                                                <li><a class="dropdown-item" style="cursor: pointer;" onclick="if (confirm('Are you sure you want to delete this user?')) { location.replace('/DeleteCampaign/<?php echo $campaigns['id'] ?>'); }">Delete</a></li>
                                             </ul>
                                         </div>
                                     </td>
@@ -95,6 +102,10 @@
                         <?php } ?>
                     </tbody>
                 </table>
+                <div class="pager d-flex justify-content-center">
+                    <?php echo $pager['pager']->links() ?>
+                </div>
+
             </div>
         </div>
     </div>

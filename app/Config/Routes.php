@@ -5,8 +5,11 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Home::index');
-$routes->get('/Home', 'Home::showDashboard');
+// $routes->get('/', 'Home::index');
+// $routes->get('/Home', 'Home::showDashboard');    
+$routes->setAutoRoute(true);
+
+// This will allow you to access the getData method using the URL /data
 //campaigns
 $routes->get('/Campaigns', 'Home::showCampagins');
 $routes->get('/displayCreateCampaign', 'Home::displayCreateCampaign');
@@ -27,3 +30,6 @@ $routes->get('/displayCreateUsers', 'Home::displayCreateUsers');
 $routes->post('/createUser', 'Home::createUser');
 $routes->get('/DeleteUser/(:any)', 'Home::DeleteUser/$1');
 $routes->post('/updateUser/(:any)', 'Home::UpdateUser/$1');
+    
+//Chat
+// $routes->get('/Chat','')
