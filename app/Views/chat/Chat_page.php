@@ -393,6 +393,9 @@
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="../../../public/bootstrap/bootstrap"></script>
+    <script>
+        
+    </script>
 </body>
 
 </html>

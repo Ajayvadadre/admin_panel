@@ -44,11 +44,11 @@
                 <h4 class="mb-4">User Details</h4>
                 <div class="right-div d-flex ">
                     <!-- Button trigger modal -->
-                    <button type="button" style="height:max-content; margin-right: 50px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <button type="button" style="height:max-content; margin-right: 10px;" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         Filter
                     </button>
                     <a href="/displayCreateUsers" class="">
-                        <h3 class="mr-3">+</h3>
+                        <h3 class="mr-3 btn btn-primary text-light"> Create +</h3>
                     </a>
                 </div>
             </div>
@@ -81,7 +81,7 @@
                                         <p class="fw-normal mb-1"><?php echo $user['Lastname'] ?></p>
                                     </td>
                                     <td><?php echo $user['Username'] ?></td>
-                                    <td><?php echo  $accesslevel[$user['Accesslevel'] - 1]['roles']  ?></td>
+                                    <td><?php echo $accesslevel[$user['Accesslevel'] - 1]['roles']  ?></td>
 
                                     <td>
                                         <span class="badge badge-success rounded-pill d-inline">Active</span>
@@ -127,8 +127,8 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
                             </div>
                             <form action="/Users">
-                            <div class="modal-body">
-                                <div class="select mr-5 mt-2">
+                                <div class="modal-body">
+                                    <div class="select mr-5 mt-2">
                                         <select class="js-example-basic-single" style="width: 90%;" name="state">
                                             <option value="">Select role</option>
                                             <?php
@@ -142,14 +142,14 @@
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                     <button type="submit" class="btn btn-primary">Filter</button>
-                                </form>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
