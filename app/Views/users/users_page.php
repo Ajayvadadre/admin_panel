@@ -129,14 +129,24 @@
                             <form action="/Users">
                                 <div class="modal-body">
                                     <div class="select mr-5 mt-2">
+                                        <label for="" class="font-weight-bold">Select role </label>
                                         <select class="js-example-basic-single" style="width: 90%;" name="state">
-                                            <option value="">Select role</option>
+                                            <option value=""><?php if ($_GET) {
+                                                                    $data =  $_GET;
+                                                                    echo   $accesslevel[$user['Accesslevel'] - 1]['roles'];
+                                                                }
+                                                                ?></option>
                                             <?php
                                             foreach ($accesslevel as $role) { ?>
                                                 <option value="<?php echo $role['id'] ?>"><?php echo $role['roles'] ?></option>
                                             <?php } ?>
                                         </select>
-                                        <!-- <input type="submit" name="" class="btn btn-primary" id=""> -->
+                                        <label for="" class="mt-4 font-weight-bold">Search username</label>
+                                        <input name="userName" value="<?php if ($_GET) {
+                                                                            $data =  $_GET;
+                                                                            echo  $data['userName'];
+                                                                        }
+                                                                        ?>" type="search">
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -159,3 +169,5 @@
         $('.js-example-basic-single').select2();
     });
 </script>
+
+<!-- On button click button should go on loading  -->

@@ -25,4 +25,19 @@ class UserModel extends Model
        $data=  $this->update($id,$data);
        return $data;
     }
+    public function showUsers($state,$userName)
+    {
+        $pagerData = $this->user->pager;
+        $accessLevel = $this->accessLevel->find();
+        $query = $this;
+        if ($state) {
+            $query->where("Accesslevel", $state);
+        }
+        if ($userName) {
+            $query->like("Username", "$userName%", 'after');
+        }
+        $all_users = $query->paginate(3);
+        return $all_users;
+ 
+    }
 }

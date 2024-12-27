@@ -39,6 +39,9 @@
         <div class="col-md-12 py-3">
             <div class="header w-100 d-flex justify-content-between">
                 <h4 class="mb-4">Campaign Details</h4>
+                <button type="button" style="height:max-content; margin-right: 10px;" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Filter
+                </button>
                 <a href="/displayCreateCampaign" class="">
                     <h3 class="mr-3">+</h3>
                 </a>
@@ -105,7 +108,31 @@
                 <div class="pager d-flex justify-content-center">
                     <?php echo $pager['pager']->links() ?>
                 </div>
-
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title fs-5" id="exampleModalLabel">Filter</h3>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+                            </div>
+                            <form action="/Users">
+                                <div class="modal-body">
+                                    <div class="select mr-5 mt-2">
+                                        <label for="" class="mt-4 font-weight-bold">Search username</label>
+                                        <input name="Name" type="search">
+                                        <label for="" class="mt-4 font-weight-bold">Search Client</label>
+                                        <input name="Client" type="search">
+                                        <label for="" class="mt-4 font-weight-bold">Search Supervisor</label>
+                                        <input name="Supervisor" type="search">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

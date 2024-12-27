@@ -87,30 +87,41 @@ class Home extends BaseController
     }
     public function showUsers()
     {
-        // $db = \Config\Database::connect();
-        // $query = 'select *, ( select roles from accesslevel where accesslevel.id = users.Accesslevel ) as accessname from users;';
-        // $resultTable = $db->query($query);
-
-        $all_users = $this->user->paginate(3);
+        $all_users_dropDown = $this->user->paginate();
         $pagerData = $this->user->pager;
         $accessLevel = $this->accessLevel->find();
         $state = $this->request->getGet('state');
+        $userName = $this->request->getGet('userName');
 
-        if ($state) {
-            $all_users = $this->user->where('Accesslevel',$state)->paginate(3);
-            $data['pager'] = ['pager' => $pagerData];
-            $data['page'] = 'users/users_page';
-            $data['data'] =  ['all_users' => $all_users, 'accesslevel' => $accessLevel];
-        }
+        $all_users = $this->user->showUsers($state,$userName);
+
+        // $query = $this->user;
+        // if ($state) {
+        //     $query->where("Accesslevel", $state);
+        // }
+        // if ($userName) {
+        //     $query->like("Username", "$userName%", 'after');
+        // }
+        // $all_users = $query->paginate(3);
         $data['pager'] = ['pager' => $pagerData];
         $data['page'] = 'users/users_page';
-        $data['data'] =  ['all_users' => $all_users, 'accesslevel' => $accessLevel];
+        $data['data'] =  ['all_users' => $all_users, 'accesslevel' => $accessLevel,  "all_users_dropDown" => $all_users_dropDown];
         echo view('/inc/template', $data);
-        // $all_users = $this->user->findAll();
-        // $accessLevels = $this->accessLevel->getAccessLevels();
     }
     public function showCampagins()
     {
+        $Name = $this->request->getGet('Name');
+        $Client = $this->request->getGet('Client');
+        $Supervisor = $this->request->getGet('Supervisor');
+        $query = $this->campaign;
+
+        if ($Name) {
+            $query->like("Accesslevel", $Name);
+        }
+        if ($Client) {
+            $query->like("Username", "$Supervisor%", 'after');
+        }
+
         $all_campaigns = $this->campaign->paginate(4);
         $pagerData = $this->campaign->pager;
         $data['pager'] = ['pager' => $pagerData];
