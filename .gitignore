@@ -84,7 +84,7 @@ phpunit
 # Composer
 #-------------------------
 vendor/
-
+node_modules/
 #-------------------------
 # IDE / Development Files
 #-------------------------
@@ -123,3 +123,4 @@ nb-configuration.xml
 
 /results/
 /phpunit*.xml
+
