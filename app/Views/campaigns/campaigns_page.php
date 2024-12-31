@@ -39,12 +39,16 @@
         <div class="col-md-12 py-3">
             <div class="header w-100 d-flex justify-content-between">
                 <h4 class="mb-4">Campaign Details</h4>
-                <button type="button" style="height:max-content; margin-right: 10px;" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Filter
-                </button>
-                <a href="/displayCreateCampaign" class="">
-                    <h3 class="mr-3">+</h3>
-                </a>
+                <div class="div d-flex ">
+                    <button type="button" style="height:max-content; margin-right: 20px;" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        Filter
+                    </button>
+                    <a href="/displayCreateCampaign" class="">
+                        <h3 class="mr-3">+</h3>
+                    </a>
+                </div>
+
+
             </div>
             <div class="table">
                 <table class="table align-middle mb-0 bg-white">

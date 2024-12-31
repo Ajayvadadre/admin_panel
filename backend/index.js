@@ -24,8 +24,8 @@ const start = async () => {
       console.log("listening on *:3000");
     });
     io.on("connection", (socket) => {
-      
       console.log("a user connected");
+      socket.join("room1 ")
       socket.on("sendMessage", (message) => {
         console.log(message);
         io.emit('backendMessage',message)

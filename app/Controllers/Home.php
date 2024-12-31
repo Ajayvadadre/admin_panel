@@ -41,21 +41,26 @@ class Home extends BaseController
         $client = $this->request->getVar('client');
         $supervisor = $this->request->getVar('supervisor');
 
-        $checkCampaign = $this->campaign->where('name', $name)->first();
+        $checkCampaign = $this->campaign->createCampaign($name, $description, $client, $supervisor);
 
-        if ($checkCampaign) {
-            session()->setFlashData("sameCampaignError", "Campaign Name already exists");
-            return   redirect()->to('/displayCreateCampaign');
-        } else {
-            $this->campaign->save([
-                "name" => $name,
-                "description" => $description,
-                "client" => $client,
-                "supervisor" => $supervisor
-            ]);
-        }
+        // if ($checkCampaign) {
+        //     session()->setFlashData("sameCampaignError", "Campaign Name already exists");
+        //     return   redirect()->to('/displayCreateCampaign');
+        // } else {
+        //     return redirect()->to('/Campaigns');
+        // }
+        // if ($checkCampaign) {
+        //     session()->setFlashData("sameCampaignError", "Campaign Name already exists");
+        //     return   redirect()->to('/displayCreateCampaign');
+        // } else {
+        //     $this->campaign->save([
+        //         "name" => $name,
+        //         "description" => $description,
+        //         "client" => $client,
+        //         "supervisor" => $supervisor
+        //     ]);
+        // }
 
-        return redirect()->to('/Campaigns');
     }
     public function displayProcess($id)
     {
@@ -76,33 +81,18 @@ class Home extends BaseController
         $client = $this->request->getVar('client');
         $supervisor = $this->request->getVar('supervisor');
 
-        $this->campaign->save([
-            "name" => $name,
-            "description" => $description,
-            "client" => $client,
-            "supervisor" => $supervisor
-        ]);
+        $this->campaign->createProcess($name, $description, $client, $supervisor);
 
         return redirect()->to('/Campaigns');
     }
     public function showUsers()
     {
-        $all_users_dropDown = $this->user->paginate();
-        $pagerData = $this->user->pager;
-        $accessLevel = $this->accessLevel->find();
         $state = $this->request->getGet('state');
         $userName = $this->request->getGet('userName');
-
-        $all_users = $this->user->showUsers($state,$userName);
-
-        // $query = $this->user;
-        // if ($state) {
-        //     $query->where("Accesslevel", $state);
-        // }
-        // if ($userName) {
-        //     $query->like("Username", "$userName%", 'after');
-        // }
-        // $all_users = $query->paginate(3);
+        $all_users_dropDown = $this->user->paginate();
+        $pagerData = $this->user->pager;
+        $accessLevel = $this->accessLevel->getAccessLevels();
+        $all_users = $this->user->showUsers($state, $userName);
         $data['pager'] = ['pager' => $pagerData];
         $data['page'] = 'users/users_page';
         $data['data'] =  ['all_users' => $all_users, 'accesslevel' => $accessLevel,  "all_users_dropDown" => $all_users_dropDown];
@@ -185,10 +175,7 @@ class Home extends BaseController
     }
     public function displayUpdateUser($id)
     {
-
-        $userData = $this->user->find($id);
-
-
+        $userData = $this->user->displayUpdateUser($id);
         $data['page'] = 'users/createusers_page';
         $data['data'] =  ['userData' => $userData];
         echo view('/inc/template', $data);
@@ -202,7 +189,6 @@ class Home extends BaseController
     }
     public function deleteCampaign($id)
     {
-
         $this->campaign->DeleteCampaign($id);
         return redirect()->to('/Campaigns');
     }

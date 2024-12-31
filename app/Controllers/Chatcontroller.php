@@ -30,8 +30,8 @@ class Chatcontroller extends BaseController
         echo view('/inc/footer');
     }
 
-    public function getShowChat()
-    {
-        echo view('/chat/Chat_page');
+    public function getShowChat()   
+    {   $all_user = $this->user->showUsers(null,null);
+        echo view('/chat/Chat_page',["all_user"=>$all_user]);
     }
 }

@@ -104,7 +104,16 @@
                     <li class="nav-item ">
                         <a class="nav-link    ml-3" style="color: #6c6c6c; " href="#"> <i class="fas fa-file-alt"></i> Custom Reports</a>
                     </li>
+
                 </ul>
+                <div class="dropdown logout  justify-content-end d-flex ml-3  ">
+                    <button class=" border-0 bg-light text-dark " style="height: 0;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        &vellip;
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/">Logout</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="div-breadcrumbs">

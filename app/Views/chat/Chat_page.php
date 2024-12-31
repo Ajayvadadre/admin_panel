@@ -292,48 +292,18 @@
                         <?php $condition = true;
                         if ($condition) { ?>
                             <ul class="list-unstyled chat-list mt-2 mb-0">
-                                <li class="clearfix">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
-                                    <div class="about">
-                                        <div class="name">Vincent Porter</div>
-                                        <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>
-                                    </div>
-                                </li>
-                                <li class="clearfix active">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
-                                    <div class="about">
-                                        <div class="name">Aiden Chavez</div>
-                                        <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                                    </div>
-                                </li>
-                                <li class="clearfix">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar">
-                                    <div class="about">
-                                        <div class="name">Mike Thomas</div>
-                                        <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                                    </div>
-                                </li>
-                                <li class="clearfix">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                                    <div class="about">
-                                        <div class="name">Christian Kelly</div>
-                                        <div class="status"> <i class="fa fa-circle offline"></i> left 10 hours ago </div>
-                                    </div>
-                                </li>
-                                <li class="clearfix">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar8.png" alt="avatar">
-                                    <div class="about">
-                                        <div class="name">Monica Ward</div>
-                                        <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                                    </div>
-                                </li>
-                                <li class="clearfix">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar">
-                                    <div class="about">
-                                        <div class="name">Dean Henry</div>
-                                        <div class="status"> <i class="fa fa-circle offline"></i> offline since Oct 28 </div>
-                                    </div>
-                                </li>
+                                <?php
+                                foreach ($all_user as $user)  { ?>
+                                    <li class="clearfix">
+                                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
+                                        <div class="about">
+                                            <div class="name text-capitalize"><?php echo $user['Username'] ?></div>
+                                            <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>
+                                        </div>
+                                    </li>
+                                <?php }
+                                ?>
+
                             </ul>
                         <?php } else { ?>
                             <ul class="clearfix mt-5">
@@ -407,8 +377,8 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="<?php echo base_url('jquery/jquery.js') ?>"></script>
+    <script src="<?php echo base_url('socketio/socketio.js') ?>"></script>
     <script>
         const socket = io.connect('http://localhost:3000');
         const sendBtn = document.getElementById('sendBtn');
@@ -422,7 +392,7 @@
             console.log(message)
             socket.emit('sendMessage', message);
             textField.value = '';
-            socket.on('bkMessage', function(msg) {
+            socket.on('backendMessage', function(msg) {
                 var item = document.createElement('div');
                 item.innerHTML = `<div class="message other-message float-right mt-2" id="show-message">${msg}</div>`;
                 messageField.appendChild(item);
@@ -435,14 +405,15 @@
                 console.log(message)
                 socket.emit('sendMessage', message);
                 textField.value = '';
-                socket.on('backendMessage', function(msg) {
-                    var item = document.createElement('li');
-                    item.innerHTML = `<div class="message other-message float-right" id="show-message">${msg}</div>`;
-                    messageField.appendChild(item);
-                    window.scrollTo(0, document.body.scrollHeight);
-                });
+
             }
         })
+        socket.on('backendMessage', function(msg) {
+            var item = document.createElement('div');
+            item.innerHTML = `<div class="message other-message float-right mt-2" id="show-message">${msg}</div>`;
+            messageField.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
     </script>
 </body>
 

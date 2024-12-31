@@ -11,6 +11,8 @@ $routes->setAutoRoute(true);
 
 // This will allow you to access the getData method using the URL /data
 //campaigns
+
+$routes->get('/', 'Logincontroller::index');
 $routes->get('/Campaigns', 'Home::showCampagins');
 $routes->get('/displayCreateCampaign', 'Home::displayCreateCampaign');
 $routes->post('/createCampaign', 'Home::createCampaign');
@@ -33,3 +35,7 @@ $routes->post('/updateUser/(:any)', 'Home::UpdateUser/$1');
     
 //Chat
 // $routes->get('/Chat','')
+
+//Login 
+$routes->post('/login', 'LoginController::authenticate');   
+$routes->post('/register/saveData', 'RegistarController::saveData');

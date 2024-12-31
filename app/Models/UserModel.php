@@ -12,23 +12,24 @@ class UserModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['Firstname','Lastname','Username','Password','Accesslevel'];
+    protected $allowedFields    = ['Firstname', 'Lastname', 'Username', 'Password', 'Accesslevel'];
     protected $createdField  = 'created_at';
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
 
-    public function DeleteUser($id){
+    public function DeleteUser($id)
+    {
         $this->delete($id);
     }
-    public function UpdateUser($id,$data) {
-       $data=  $this->update($id,$data);
-       return $data;
-    }
-    public function showUsers($state,$userName)
+    public function UpdateUser($id, $data)
     {
-        $pagerData = $this->user->pager;
-        $accessLevel = $this->accessLevel->find();
+        $data =  $this->update($id, $data);
+        return $data;
+    }
+    public function showUsers($state, $userName)
+    {
+
         $query = $this;
         if ($state) {
             $query->where("Accesslevel", $state);
@@ -38,6 +39,11 @@ class UserModel extends Model
         }
         $all_users = $query->paginate(3);
         return $all_users;
- 
     }
+    public function displayUpdateUser($id)
+    {
+        $userData = $this->find($id);
+        return $userData;
+    }
+    
 }
