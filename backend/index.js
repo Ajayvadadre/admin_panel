@@ -20,16 +20,26 @@ const io = new Server(server, {
 const start = async () => {
   try {
     await connectDB();
+    //Server connection
     server.listen(3000, () => {
       console.log("listening on *:3000");
     });
+    //Socket connection 
     io.on("connection", (socket) => {
-      console.log("a user connected");
-      socket.join("room1 ")
-      socket.on("sendMessage", (message) => {
-        console.log(message);
+      // console.log("a user connected");
+      socket.join("room1")
+      io.to('room1').emit('hi')
+      socket.on("sendMessage", (message,username) => {
+        console.log("This is the message: " + message);
         io.emit('backendMessage',message)
       });
+    
+      socket.on('joinRoom', (userId) => {
+        console.log(userId)
+        socket.join(userId);
+      });
+
+    
     });
   } catch (error) {
     console.log("Connection error: " + error);

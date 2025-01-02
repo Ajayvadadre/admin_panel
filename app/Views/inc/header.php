@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="<?php echo base_url('bootstrap/bootstrap.css') ?>">
     <link rel="stylesheet" href="<?php echo base_url('selecto/selecto.css') ?>" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <style>
         html {
             background-color: rgb(226, 226, 226);
@@ -26,7 +27,8 @@
         }
 
         .collapse {
-            margin-left: 9rem;
+            margin-left: 4rem;
+
         }
 
 
@@ -106,14 +108,16 @@
                     </li>
 
                 </ul>
-                <div class="dropdown logout  justify-content-end d-flex ml-3  ">
-                    <button class=" border-0 bg-light text-dark " style="height: 0;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        &vellip;
+                <div class="dropdown logout   justify-content-end d-flex ml-5  ">
+                    <button class=" border-0 btn dropdown  btn-primary  text-capitalize  " style="font-weight: 500; " type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <?= session('username') ?>
                     </button>
+
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="/">Logout</a></li>
                     </ul>
                 </div>
+     
             </div>
         </div>
         <div class="div-breadcrumbs">

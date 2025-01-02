@@ -293,11 +293,11 @@
                         if ($condition) { ?>
                             <ul class="list-unstyled chat-list mt-2 mb-0">
                                 <?php
-                                foreach ($all_user as $user)  { ?>
-                                    <li class="clearfix">
+                                foreach ($all_user as $user) { ?>
+                                    <li class="clearfix" id="agentsList" data-username="<?php echo $user['Username'] ?>">
                                         <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
                                         <div class="about">
-                                            <div class="name text-capitalize"><?php echo $user['Username'] ?></div>
+                                            <div id="someid" class="name text-capitalize"><?php echo $user['Username'] ?></div>
                                             <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>
                                         </div>
                                     </li>
@@ -335,7 +335,7 @@
                         </div>
                         <div class="chat-history">
                             <ul class="m-b-0">
-                                <li class="clearfix">
+                                <!-- <li class="clearfix">
                                     <div class="message-data text-right">
                                         <span class="message-data-time">10:10 AM, Today</span>
                                         <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
@@ -354,7 +354,7 @@
                                         <span class="message-data-time">10:15 AM, Today</span>
                                     </div>
                                     <div class="message my-message">Project has been already finished and I have results to show you.</div>
-                                </li>
+                                </li> -->
                                 <li class="clearfix d-flex flex-column" id="messageField">
                                     <div class="message-data text-right">
                                         <span class="message-data-time">10:10 AM, Today</span>
@@ -380,13 +380,44 @@
     <script src="<?php echo base_url('jquery/jquery.js') ?>"></script>
     <script src="<?php echo base_url('socketio/socketio.js') ?>"></script>
     <script>
-        const socket = io.connect('http://localhost:3000');
+        const someId = document.getElementById('someid').textContent
+        const socket = io(URL, {
+            autoConnect: false
+        });
+        // const socket = io.connect('http://localhost:3000'); to not connect to socket directly 
         const sendBtn = document.getElementById('sendBtn');
         const textField = document.getElementById('textField');
         const messageField = document.getElementById('messageField');
         const displayMessage = document.getElementById('show-message');
+        const agentsList = document.querySelectorAll("#agentsList");
+        // const value =agentsList.getAttribute()
+        // const agentsList = document.querySelectorAll(".agent");
+        // let message;
 
-        let message;
+
+        //getting username--------------
+        agentsList.forEach((x) => {
+
+        });
+        
+        // To get all the socket events inside console
+        socket.onAny((event, ...args) => {
+            console.log(event, args);
+        });
+
+        agentsList.forEach((x) => {
+
+            x.addEventListener('click', (event) => {
+                const username = x.getAttribute('data-username');
+                console.log(username);
+                socket.auth() = {
+                    username
+                };
+                socket.connect();
+                socket.emit('joinRoom', username);
+            });
+        });
+
         sendBtn.addEventListener('click', () => {
             message = textField.value
             console.log(message)
@@ -403,7 +434,7 @@
             if (event.key == 'Enter') {
                 message = textField.value
                 console.log(message)
-                socket.emit('sendMessage', message);
+                socket.emit('sendMessage', message, username);
                 textField.value = '';
 
             }
