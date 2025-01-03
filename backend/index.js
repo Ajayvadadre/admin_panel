@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const port = 3000;
 app.use(cors());
-app.get("/", (req, res) => { 
+app.get("/", (req, res) => {
   res.send("Connected");
 });
 const io = new Server(server, {
@@ -24,22 +24,42 @@ const start = async () => {
     server.listen(3000, () => {
       console.log("listening on *:3000");
     });
-    //Socket connection 
+
+    //Socket connection
+    let registerUserId = [];
     io.on("connection", (socket) => {
-      // console.log("a user connected");
-      socket.join("room1")
-      io.to('room1').emit('hi')
-      socket.on("sendMessage", (message,username) => {
-        console.log("This is the message: " + message);
-        io.emit('backendMessage',message)
+      // register user
+      socket.on("register", (sender) => {
+        registerUserId[sender] = socket.id;
+        console.log( registerUserId);
       });
-    
-      socket.on('joinRoom', (userId) => {
-        console.log(userId)
-        socket.join(userId);
+      socket.join("room1");
+
+      // Socket send message
+      socket.on("sendMessage", (message, sender, reciver) => {
+        console.log(
+          "This is the message from: " + sender + "," + message + "," + reciver
+        );
+        io.emit("recievedMessage", message, reciver);
+        io.to("room1").emit("roomOneMessage", message, reciver);
       });
 
-    
+      // Private chat room
+      socket.on("privateMessage", ({ message, reciver, sender }) => {
+        console.log(
+          "private message: " + sender + "," + message + "," + reciver
+        );
+        socket.to(registerUserId[reciver]).emit("private message", {
+          message,
+          from: sender,
+        });
+      });
+
+      // Socket room create
+      socket.on("joinRoom", (userId) => {
+        console.log(userId);
+        socket.join(userId);
+      });
     });
   } catch (error) {
     console.log("Connection error: " + error);

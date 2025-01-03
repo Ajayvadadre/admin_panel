@@ -321,19 +321,21 @@
                                         <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
                                     </a>
                                     <div class="chat-about">
-                                        <h6 class="m-b-0">Aiden Chavez</h6>
+                                        <h6 id="reciverHeading" class="m-b-0 text-capitalize">Aiden Chavez</h6>
                                         <small>Last seen: 2 hours ago</small>
                                     </div>
                                 </div>
                                 <div class="col-lg-6 hidden-sm text-right">
-                                    <a href="javascript:void(0);" class="btn btn-outline-secondary"><i class="fa fa-camera"></i></a>
+                                    <!-- <a href="javascript:void(0);" class="btn btn-outline-secondary"><i class="fa fa-camera"></i></a>
                                     <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-image"></i></a>
                                     <a href="javascript:void(0);" class="btn btn-outline-info"><i class="fa fa-cogs"></i></a>
-                                    <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a> -->
+                                    <p><?= session('username') ?></p>
+
                                 </div>
                             </div>
                         </div>
-                        <div class="chat-history">
+                        <div class="chat-history" style="height: 50vh;">
                             <ul class="m-b-0">
                                 <!-- <li class="clearfix">
                                     <div class="message-data text-right">
@@ -381,67 +383,80 @@
     <script src="<?php echo base_url('socketio/socketio.js') ?>"></script>
     <script>
         const someId = document.getElementById('someid').textContent
-        const socket = io(URL, {
-            autoConnect: false
-        });
-        // const socket = io.connect('http://localhost:3000'); to not connect to socket directly 
+        // const socket = io(URL, {
+        //     autoConnect: false
+        // });
+        const socket = io.connect('http://localhost:3000');
         const sendBtn = document.getElementById('sendBtn');
         const textField = document.getElementById('textField');
         const messageField = document.getElementById('messageField');
         const displayMessage = document.getElementById('show-message');
         const agentsList = document.querySelectorAll("#agentsList");
-        // const value =agentsList.getAttribute()
-        // const agentsList = document.querySelectorAll(".agent");
-        // let message;
+        const sender = "<?= session('username') ?>"
+        const reciverHeading = document.getElementById('reciverHeading');
+        let reciver = null
 
 
-        //getting username--------------
-        agentsList.forEach((x) => {
+        // Registering user id:
+        socket.emit("register", sender);
 
-        });
-        
         // To get all the socket events inside console
         socket.onAny((event, ...args) => {
             console.log(event, args);
         });
 
-        agentsList.forEach((x) => {
+        // Private message 
+        const sendPrivateMessage = () => {
+            console.log(sender, reciever, message);
+        }
 
+
+        // Display agents list on screen 
+        agentsList.forEach((x) => {
             x.addEventListener('click', (event) => {
-                const username = x.getAttribute('data-username');
-                console.log(username);
-                socket.auth() = {
-                    username
-                };
-                socket.connect();
-                socket.emit('joinRoom', username);
+                reciver = x.getAttribute('data-username');
+                console.log(reciver);
+                reciverHeading.innerText = reciver
+                // socket.emit('joinRoom', reciver);
+                return reciver;
             });
         });
 
+        //Socket emit 
         sendBtn.addEventListener('click', () => {
             message = textField.value
-            console.log(message)
             socket.emit('sendMessage', message);
             textField.value = '';
-            socket.on('backendMessage', function(msg) {
-                var item = document.createElement('div');
-                item.innerHTML = `<div class="message other-message float-right mt-2" id="show-message">${msg}</div>`;
-                messageField.appendChild(item);
-                window.scrollTo(0, document.body.scrollHeight);
-            });
         })
         textField.addEventListener('keydown', () => {
             if (event.key == 'Enter') {
                 message = textField.value
                 console.log(message)
-                socket.emit('sendMessage', message, username);
+                // socket.`emit('sendMessage', message, sender, reciver);
+                socket.emit('privateMessage', {
+                    message,
+                    reciver,
+                    sender
+                })
                 textField.value = '';
-
             }
         })
-        socket.on('backendMessage', function(msg) {
+        //Socket listener 
+        socket.on('recievedMessage', function(msg) {
             var item = document.createElement('div');
             item.innerHTML = `<div class="message other-message float-right mt-2" id="show-message">${msg}</div>`;
+            messageField.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+
+        //private message reciever 
+        socket.on("private message", ({
+            message,
+            from
+        }) => {
+            console.log("Client side private msg: " + message + " " + from)
+            var item = document.createElement('div');
+            item.innerHTML = `<div class="message other-message float-right mt-2" id="show-message"><p>${from}<p/><div>${message}<div/> </div>`;
             messageField.appendChild(item);
             window.scrollTo(0, document.body.scrollHeight);
         });
