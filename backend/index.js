@@ -1,5 +1,6 @@
 const express = require("express");
 const connectDB = require("./Database/dbConnection");
+const usersData = require("./Database/chatSchema");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -20,6 +21,7 @@ const io = new Server(server, {
 const start = async () => {
   try {
     await connectDB();
+    let db = connectDB;
     //Server connection
     server.listen(3000, () => {
       console.log("listening on *:3000");
@@ -31,28 +33,41 @@ const start = async () => {
       // register user
       socket.on("register", (sender) => {
         registerUserId[sender] = socket.id;
-        console.log( registerUserId);
+        console.log(registerUserId);
       });
-      socket.join("room1");
+      socket.on("join", ({ sender, reciver }) => {
+        let room = [sender, reciver].sort().join();
+        console.log(room + ":" + "joined");
+        socket.join(room);
+      });
 
       // Socket send message
       socket.on("sendMessage", (message, sender, reciver) => {
         console.log(
           "This is the message from: " + sender + "," + message + "," + reciver
         );
-        io.emit("recievedMessage", message, reciver);
         io.to("room1").emit("roomOneMessage", message, reciver);
       });
 
       // Private chat room
       socket.on("privateMessage", ({ message, reciver, sender }) => {
+        let room = [sender, reciver].sort().join();
+        userData = {
+          sender,
+          reciver,
+          message,
+          Date,
+        };
+
         console.log(
           "private message: " + sender + "," + message + "," + reciver
         );
+        socket.emit("recievedMessage", message, reciver);
         socket.to(registerUserId[reciver]).emit("private message", {
           message,
           from: sender,
         });
+        io.to(room).emit("roomMessage", message, reciver);
       });
 
       // Socket room create

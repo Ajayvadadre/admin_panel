@@ -335,40 +335,19 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="chat-history" style="height: 50vh;">
+                        <div class="chat-history">
                             <ul class="m-b-0">
-                                <!-- <li class="clearfix">
-                                    <div class="message-data text-right">
-                                        <span class="message-data-time">10:10 AM, Today</span>
-                                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                                    </div>
-                                    <div class="message other-message float-right"> Hi Aiden, how are you? How is the project coming along? </div>
-                                </li>
-
-                                <li class="clearfix">
-                                    <div class="message-data">
-                                        <span class="message-data-time">10:12 AM, Today</span>
-                                    </div>
-                                    <div class="message my-message">Are we meeting today?</div>
-                                </li>
-                                <li class="clearfix">
-                                    <div class="message-data">
-                                        <span class="message-data-time">10:15 AM, Today</span>
-                                    </div>
-                                    <div class="message my-message">Project has been already finished and I have results to show you.</div>
-                                </li> -->
                                 <li class="clearfix d-flex flex-column" id="messageField">
                                     <div class="message-data text-right">
                                         <span class="message-data-time">10:10 AM, Today</span>
                                         <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
                                     </div>
-                                    <!-- <div class="message other-message float-right" id="show-message"> </div> -->
                                 </li>
                             </ul>
                         </div>
                         <div class="chat-message clearfix">
                             <div class="input-group mb-0">
-                                <div class="input-group-prepend">
+                                <div class="input-group-prepend ">
                                     <span class="input-group-text" style="cursor:pointer" id="sendBtn"><i class="fa fa-send"></i></span>
                                 </div>
                                 <input type="text" id="textField" class="form-control" placeholder="Enter text here...">
@@ -377,6 +356,8 @@
                     </div>
                 </div>
             </div>
+
+
         </div>
     </div>
     <script src="<?php echo base_url('jquery/jquery.js') ?>"></script>
@@ -395,6 +376,9 @@
         const sender = "<?= session('username') ?>"
         const reciverHeading = document.getElementById('reciverHeading');
         let reciver = null
+
+
+        //emit join 
 
 
         // Registering user id:
@@ -417,7 +401,7 @@
                 reciver = x.getAttribute('data-username');
                 console.log(reciver);
                 reciverHeading.innerText = reciver
-                // socket.emit('joinRoom', reciver);
+                socket.emit('join', {sender,reciver});
                 return reciver;
             });
         });
@@ -456,10 +440,22 @@
         }) => {
             console.log("Client side private msg: " + message + " " + from)
             var item = document.createElement('div');
-            item.innerHTML = `<div class="message other-message float-right mt-2" id="show-message"><p>${from}<p/><div>${message}<div/> </div>`;
+            item.innerHTML = `   <li class="clearfix">
+                <div class="message-data mt-2">
+                    <span class="message-data-time">${from}</span>
+                </div>
+                <div class="message my-message">${message}</div>
+            </li>`;
             messageField.appendChild(item);
             window.scrollTo(0, document.body.scrollHeight);
         });
+
+        // Room message listener
+        socket.on('roomMessage',()=>{
+            
+        })
+
+
     </script>
 </body>
 
