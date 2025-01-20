@@ -9,7 +9,7 @@
 
 <body>
     <?php echo view('inc/header') ?>
-    <?php echo view($page, $data ?? []) ?>
+    <?php echo view($page??null, $data ?? []) ?>
     <?php echo view('inc/footer') ?>
 </body>
 

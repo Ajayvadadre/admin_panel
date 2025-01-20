@@ -400,3 +400,205 @@
 <!-- amarsharma :  1122 -->
 <!-- ajayvadadre : 112233 -->
 <!-- yash12 : 1122 -->
+<!-- mitileshShinde : 1122 -->  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public function logger_report($id){ 
+        $data['loginDetails'] = session()->get(); 
+        $page = $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1; 
+        $perPage = 10; 
+        $data['id']= $id;
+        // Number of records per page 
+        $ch = curl_init(); 
+        $url =  $id==="mysql" ? 'http://localhost:3000/mysql/summary' : ($id==="mongo" ?'http://localhost:3000/mongo/summary' : "localhost:3000/elastic/summary"); 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+        curl_setopt($ch, CURLOPT_URL, $url); 
+        $response = json_decode(curl_exec($ch), true); 
+        $total = count($response); 
+        $data['pageData'] = $id ==="elastic" ? array_slice($response, ($page - 1) * $perPage, $perPage)['aggregations']['group_by_hour']['buckets'] : array_slice($response, ($page - 1) * $perPage, $perPage); 
+        $data['pager'] = $this->pager->makeLinks($page, $perPage, $total); 
+        echo view('components/Dashborad', $data); 
+        echo view('components/logger_report', $data); 
+    }
+
+
+
+
+
+
+
+
+ 
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="card">
+          <div class="d-flex">
+                <h5 class="card-header" >Summary Reports</h5>
+                <div class="card-body mt-3">
+                  <a href="#" class="btn btn-info">download</a>
+                </div>
+          </div>
+                <div class="table-responsive text-nowrap">
+                  <table class="table">
+                    <thead class="table-dark">
+                      <tr>
+                        <th>hours</th>
+                        <th>call count</th>
+                        <th>Total duration</th>
+                        <th>Total hold</th>
+                        <th>Total Mute</th>
+                        <th>total Ringing</th>
+                        <th>Total transfer</th>
+                        <th>Total onCall</th>
+                        <th>Total consferenace</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                      <?php foreach($pageData as $row) { ?>
+                      <?php $total_duration = $id === "elastic" ? $row['total_hold']['value'] + $row['total_mute']['value'] +$row['total_ringing']['value']+$row['total_transfer']['value']+$row['total_onCall']['value']+$row['total_conference']['value'] : $row['total_hold'] + $row['total_mute'] +$row['total_ringing']+$row['total_transfer']+$row['total_onCall']+$row['total_conference']; ?>
+                      <tr>
+                        
+                        <td><?= $id === "elastic" ?  gmdate("H",$row['key']/1000).":00 - ".gmdate("H",$row['key']/1000)+1 .":00" : $row['hour'].":00 -  ".$row['hour']+1 .":00"  ?></td>
+                        <td><?= $id === "elastic" ? $row['doc_count'] : $row['call_count'] ?></td>
+                        <td><?= floor($total_duration/3600)?>: <?= floor(($total_duration%3600)/60)?> hr</td>
+                        <td><?= $id === "elastic" ? gmdate("H:i:s",$row['total_hold']['value']):gmdate("H:i:s", $row['total_hold']) ?>Hr</td>
+                        <td><?= $id === "elastic" ? gmdate("H:i:s",$row['total_mute']['value']):gmdate("H:i:s",$row['total_mute'])?> Hr</td>
+                        <td><?= $id === "elastic" ? gmdate("H:i:s",$row['total_ringing']['value']):gmdate("H:i:s",$row['total_ringing']) ?> Hr</td>
+                        <td><?= $id === "elastic" ? gmdate("H:i:s",$row['total_transfer']['value']):gmdate("H:i:s",$row['total_transfer']) ?>: Hr</td>
+                        <td><?= $id === "elastic" ? gmdate("H:i:s",$row['total_onCall']['value']):gmdate("H:i:s",$row['total_onCall']) ?> Hr</td>
+                        <td><?= $id === "elastic" ? gmdate("H:i:s",$row['total_conference']['value']):gmdate("H:i:s",$row['total_conference']) ?> Hr</td>
+                      </tr>
+                      <?php } ?>
+                    </tbody>
+                  </table>
+                  <div>
+                    <?php echo $pager ?>
+                  </div>
+                </div>
+              </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- my home view page -->
+<style>
+    .table-container {
+        padding: 4rem 2rem;
+        background-color: rgb(226, 226, 226);
+    }
+
+    .row {
+        background-color: #ffffff
+    }
+</style>
+
+<div class="container-fluid table-container">
+    <div class="row rowTable">
+        <div class="col-md-12 py-3">
+            <p></p>
+
+            <div class="header d-flex justify-content-between" >
+                <h4 class="mb-4">Logger report</h4>
+                <div class="downloadData">
+                        <form action="/ExportData" method="get">
+                            <button type="submit" style="text-transform: capitalize; border:1px solid lightgrey" class="btn btn-primary">Export csv</button>
+                        </form>
+                </div>
+            </div>
+            <div class="table">
+                <table class="table align-middle mb-0 bg-white">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Campaign name</th>
+                            <th>Process name</th>
+                            <th>Hour</th>
+                            <th>Call count</th>
+                            <th>Total duration</th>
+                            <th>Total hold</th>
+                            <th>Total ringing</th>
+                            <th>Total transfer</th>
+                            <th>Total conference</th>
+                            <th>Unique calls</th>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        <?php if ($data) {
+                            // var_dump($data);
+                            foreach ($data[0] as $value) {
+                                ?>
+                                <tr>
+                                    <td>
+                                        <p class="fw-normal mb-1"><?= $value['campaignName'] ?></p>
+                                    </td>
+                                    <td>
+                                        <p class="fw-normal mb-1"><?= $value['processName'] ?></p>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="ms-3">
+                                                <p class="fw-bold mb-1"><?= $value['hour'] ?>Hr </p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <p class="fw-normal mb-1"><?= $value['call_count'] ?></p>
+                                    </td>
+                                    <td>
+                                        <p class="fw-normal mb-1"><?= gmdate('H:i:s',$value['total_duration'])  ?></p>
+                                    </td>
+                                    <td>
+                                        <p class="fw-normal mb-1"><?= $value['total_hold'] ?></p>
+                                    </td>
+                                    <td>
+                                        <p class="fw-normal mb-1"><?= $value['total_ringing'] ?></p>
+                                    </td>
+                                    <td>
+                                        <p class="fw-normal mb-1"><?= $value['total_transfer'] ?></p>
+                                    </td>
+                                    <td>
+                                        <p class="fw-normal mb-1"><?= $value['total_conference'] ?></p>
+                                    </td>
+                                    <td>
+                                        <p class="fw-normal mb-1"><?= $value['unique_calls'] ?></p>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                        } else { ?>
+                            <td>No data avaialble</td>
+                        <?php } ?>
+                    </tbody>
+                </table>
+                <?= $pager?>
+            </div>
+        </div>
+    </div>
+</div>

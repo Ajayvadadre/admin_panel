@@ -1,6 +1,7 @@
 const express = require("express");
-const connectDB = require("./Database/dbConnection");
-const usersData = require("./Database/chatSchema");
+const { connectDB, db } = require("./Database/dbConnection");
+
+// const usersData = require("./Database/chatSchema");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -18,10 +19,11 @@ const io = new Server(server, {
   },
 });
 
+// let db = await connectDB;
+
 const start = async () => {
   try {
-    await connectDB();
-    let db = connectDB;
+    let db = await connectDB();
     //Server connection
     server.listen(3000, () => {
       console.log("listening on *:3000");
@@ -59,6 +61,7 @@ const start = async () => {
           Date,
         };
 
+        db.collection("userMessage").insertOne(userData);
         console.log(
           "private message: " + sender + "," + message + "," + reciver
         );

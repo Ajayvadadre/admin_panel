@@ -1,4 +1,4 @@
-const {MongoClient,ServerApiVersion } = require("mongodb");
+const {MongoClient,ServerApiVersion, Db } = require("mongodb");
 let uri =
   "mongodb+srv://ajayvadadre:ajayvadadre1234@nodemongocluster.1y5lp.mongodb.net/";
 const client = new MongoClient(uri, {
@@ -8,17 +8,19 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
-
+let db;
 async function connectDB() {
   try {
     await client.connect();
-    await client.db("admin").command({ ping: 1 });
+     db = client.db("admin");
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
+    // console.log(db)
+    return db;
   } finally {
     await client.close();
   }
 }
 
-module.exports = connectDB;
+module.exports = {connectDB,client,db};

@@ -9,114 +9,55 @@
     }
 </style>
 
+
 <div class="container-fluid table-container">
     <div class="row rowTable">
         <div class="col-md-12 py-3">
-            <h4 class="mb-4">User details</h4>
+            <p></p>
+
+            <div class="header d-flex justify-content-between" >
+                <h4 class="mb-4">Logger report</h4>
+                <div class="downloadData">
+                        <form action="/ExportData" method="get">
+                            <button type="submit" style="text-transform: capitalize; border:1px solid lightgrey" class="btn btn-primary">Export csv</button>
+                        </form>
+                </div>
+            </div>
             <div class="table">
-                <table class="table align-middle mb-0 bg-white">
-                    <thead class="bg-light">
-                        <tr>
-                            <th>Name</th>
-                            <th>Title</th>
-                            <th>Status</th>
-                            <th>Position</th>
-                            <th>Actions</th>
-                        </tr>
+            <table class="table">
+                    <thead class="table-dark">
+                      <tr>
+                        <th>hours</th>
+                        <th>call count</th>
+                        <th>Total duration</th>
+                        <th>Total hold</th>
+                        <th>Total Mute</th>
+                        <th>total Ringing</th>
+                        <th>Total transfer</th>
+                        <th>Total onCall</th>
+                        <th>Total consferenace</th>
+                      </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <!-- <img
-                                            src="https://mdbootstrap.com/img/new/avatars/8.jpg"
-                                            alt=""
-                                            style="width: 45px; height: 45px"
-                                            class="rounded-circle" /> -->
-                                    <div class="ms-3">
-                                        <p class="fw-bold mb-1">John Doe</p>
-                                        <!-- <p class="text-muted mb-0">john.doe@gmail.com</p> -->
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <p class="fw-normal mb-1">Software engineer</p>
-                                <!-- <p class="text-muted mb-0">IT department</p> -->
-                            </td>
-                            <td>
-                                <span class="badge badge-success rounded-pill d-inline">Available</span>
-                            </td>
-                            <td>admin</td>
-                            <td>
-                                <button type="button" class="btn btn-link btn-sm btn-rounded">
-                                    Edit
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <!-- <img
-                                            src="https://mdbootstrap.com/img/new/avatars/6.jpg"
-                                            class="rounded-circle"
-                                            alt=""
-                                            style="width: 45px; height: 45px" /> -->
-                                    <div class="ms-3">
-                                        <p class="fw-bold mb-1">Alex Ray</p>
-                                        <!-- <p class="text-muted mb-0">alex.ray@gmail.com</p> -->
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <p class="fw-normal mb-1">Consultant</p>
-                                <!-- <p class="text-muted mb-0">Finance</p> -->
-                            </td>
-                            <td>
-                                <span class="badge badge-primary rounded-pill d-inline">running</span>
-                            </td>
-                            <td>Team leader</td>
-                            <td>
-                                <button
-                                    type="button"
-                                    class="btn btn-link btn-rounded btn-sm fw-bold"
-                                    data-mdb-ripple-color="dark">
-                                    Edit
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <!-- <img
-                                            src="https://mdbootstrap.com/img/new/avatars/7.jpg"
-                                            class="rounded-circle"
-                                            alt=""
-                                            style="width: 45px; height: 45px" /> -->
-                                    <div class="ms-3">
-                                        <p class="fw-bold mb-1">Kate Hunington</p>
-                                        <!-- <p class="text-muted mb-0">kate.hunington@gmail.com</p> -->
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <p class="fw-normal mb-1">Designer</p>
-                                <!-- <p class="text-muted mb-0">UI/UX</p> -->
-                            </td>
-                            <td>
-                                <span class="badge badge-danger rounded-pill d-inline">stopped</span>
-                            </td>
-                            <td>Supervisor</td>
-                            <td>
-                                <button
-                                    type="button"
-                                    class="btn btn-link btn-rounded btn-sm fw-bold"
-                                    data-mdb-ripple-color="dark">
-                                    Edit
-                                </button>
-                            </td>
-                        </tr>
+                    
+                    <tbody class="table-border-bottom-0">
+                      <?php foreach($data as $row) { ?>
+                      <?php $total_duration = $id === "elastic" ? $row['total_hold']['value'] + $row['total_mute']['value'] +$row['total_ringing']['value']+$row['total_transfer']['value']+$row['call_count']['value']+$row['total_conference']['value'] : $row['total_hold'] + $row['total_mute'] +$row['total_ringing']+$row['total_transfer']+$row['call_count']+$row['total_conference']; ?>
+                      <tr>
+                        
+                        <td><?= $id === "elastic" ?  gmdate("H",$row['key']/1000).":00 - ".gmdate("H",$row['key']/1000)+1 .":00" : $row['hour'].":00 -  ".$row['hour']+1 .":00"  ?></td>
+                        <td><?= $id === "elastic" ? $row['doc_count'] : $row['call_count'] ?></td>
+                        <td><?= floor($total_duration/3600)?>: <?= floor(($total_duration%3600)/60)?> hr</td>
+                        <td><?= $id === "elastic" ? gmdate("H:i:s",$row['total_hold']['value']):gmdate("H:i:s", $row['total_hold']) ?>Hr</td>
+                        <td><?= $id === "elastic" ? gmdate("H:i:s",$row['total_mute']['value']):gmdate("H:i:s",$row['total_mute'])?> Hr</td>
+                        <td><?= $id === "elastic" ? gmdate("H:i:s",$row['total_ringing']['value']):gmdate("H:i:s",$row['total_ringing']) ?> Hr</td>
+                        <td><?= $id === "elastic" ? gmdate("H:i:s",$row['total_transfer']['value']):gmdate("H:i:s",$row['total_transfer']) ?>: Hr</td>
+                        <td><?= $id === "elastic" ? gmdate("H:i:s",$row['call_count']['value']):gmdate("H:i:s",$row['call_count']) ?> Hr</td>
+                        <td><?= $id === "elastic" ? gmdate("H:i:s",$row['total_conference']['value']):gmdate("H:i:s",$row['total_conference']) ?> Hr</td>
+                      </tr>
+                      <?php } ?>
                     </tbody>
-                </table>
+                  </table>
+                <?= $pager?>
             </div>
         </div>
     </div>

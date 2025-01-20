@@ -10,10 +10,15 @@ class Home extends BaseController
 {
     public $campaign;
     public $user;
+    public $pagers;
     public $accessLevel;
 
     public function __construct()
     {
+        helper(['url']); 
+        $this->pagers = \Config\Services::pager();
+
+        
         $this->campaign = new CampaginModel();
         $this->user = new UserModel();
         $this->accessLevel = new AccessLevel();
@@ -23,16 +28,57 @@ class Home extends BaseController
 
         return view('/auth/login_page');
     }
-    public function showDashboard()
-    {
-        echo view('/inc/header');
-        echo view('/home');
-        echo view('/inc/footer');
-    }
+
     public function displayCreateCampaign()
     {
         $data['page'] = '/campaigns/createcampaigns_page';
         echo view('/inc/template', $data);
+    }
+
+    public function showSqlData()
+    {
+        $page = $this->request->getVar('page') ? (int) $this->request->getVar('page') : 1;
+        $perPage = 10;
+        //curl request-----
+        $ch = curl_init();
+        $url = 'http://localhost:3000/mySql/summerisedata';
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $response = json_decode(curl_exec($ch), true);
+        $total = count($response);
+        // pagination logic
+        $start = ($page - 1) * $perPage;
+        $end = $start + $perPage;
+        $paginatedData = array_slice($response, $start, $perPage);
+        //sending data------
+        $data['page'] = $page;
+        $data['data'] = $paginatedData;
+        $data['pager'] = $this->pagers->makeLinks($page, $perPage, $total);
+        // var_dump($data['data']);
+        echo view('inc/header');
+        echo view('home', $data);
+        echo view('inc/footer');
+    }
+    public function showMongoData()
+    {
+        $page = $this->request->getVar('page') ? (int) $this->request->getVar('page') : 1;
+        $perPage = 10;
+        //curl request-----
+        $ch = curl_init();
+        $url = 'http://localhost:3001/mongo/summarydata';
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $response = json_decode(curl_exec($ch), true);
+        $total = count($response);
+        //sending data------
+        $data['page'] = $page;
+        $data['data'] = array_slice($response, ($page - 1) * $perPage, $perPage);
+        $data['pager'] = $this->pagers->makeLinks($page, $perPage, $total);
+        // var_dump($data['data']);
+        echo view('inc/header');
+        echo view('mongodata', $data);
+        echo view('inc/footer');
+
     }
     public function createCampaign()
     {
@@ -65,7 +111,7 @@ class Home extends BaseController
     public function displayProcess($id)
     {
 
-        $data['data'] =  ['all_process' => null];
+        $data['data'] = ['all_process' => null];
         $data['page'] = '/process/process_page';
         echo view('/inc/template', $data);
     }
@@ -95,7 +141,7 @@ class Home extends BaseController
         $all_users = $this->user->showUsers($state, $userName);
         $data['pager'] = ['pager' => $pagerData];
         $data['page'] = 'users/users_page';
-        $data['data'] =  ['all_users' => $all_users, 'accesslevel' => $accessLevel,  "all_users_dropDown" => $all_users_dropDown];
+        $data['data'] = ['all_users' => $all_users, 'accesslevel' => $accessLevel, "all_users_dropDown" => $all_users_dropDown];
         echo view('/inc/template', $data);
     }
     public function showCampagins()
@@ -116,7 +162,7 @@ class Home extends BaseController
         $pagerData = $this->campaign->pager;
         $data['pager'] = ['pager' => $pagerData];
         $data['page'] = '/campaigns/campaigns_page';
-        $data['data'] =  ['all_campaigns' => $all_campaigns];
+        $data['data'] = ['all_campaigns' => $all_campaigns];
         echo view('/inc/template', $data);
     }
     public function displayCreateUsers()
@@ -177,14 +223,14 @@ class Home extends BaseController
     {
         $userData = $this->user->displayUpdateUser($id);
         $data['page'] = 'users/createusers_page';
-        $data['data'] =  ['userData' => $userData];
+        $data['data'] = ['userData' => $userData];
         echo view('/inc/template', $data);
     }
     public function displayUpdateCampaign($id)
     {
         $userData = $this->campaign->find($id);
         $data['page'] = 'campaigns/updatecampaign_page';
-        $data['data'] =  ['userData' => $userData];
+        $data['data'] = ['userData' => $userData];
         echo view('/inc/template', $data);
     }
     public function deleteCampaign($id)
@@ -208,5 +254,60 @@ class Home extends BaseController
         if ($data) {
             return redirect()->to('/Campaigns');
         }
+    }
+    public function exportData()
+    {
+        $filename = 'users_data' . '.csv';
+        header("Content-Description: File Transfer");
+        header("Content-Disposition: attachment; filename=$filename");
+        header("Content-Type: application/csv; ");
+
+        // get data 
+        $ch = curl_init();
+        $url = 'http://localhost:3000/mySql/summerisedata';
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $response = json_decode(curl_exec($ch), true);
+        $file = fopen('php://output', 'w');
+        $header = ["hours", "call count", "Total duration" ,"Total hold" ,"Total Mute" ,"total Ringing" ,"Total transfer" ,"Total onCall" ,"Total conferenace"];
+        fputcsv($file, $header);
+        foreach ($response as $key => $line) {
+            fputcsv($file, $line);
+        }
+        fclose($file);
+        exit;   
+    }
+
+    public function logger_report($id){ 
+        $page = $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1; 
+        $perPage = 10; 
+        $data['id']= $id;
+        // Number of records per page 
+        $ch = curl_init(); 
+        $url =  $id==="mysql" ? 'http://localhost:3000/mySql/summerisedata' : ($id==="mongo" ?'http://localhost:3001/mongo/summarydata' : ($id === "elastic" ?"localhost:3002/elastic/summary": '')) ; 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+        curl_setopt($ch, CURLOPT_URL, $url); 
+        $response = json_decode(curl_exec($ch), true); 
+        $total = count($response); 
+        $data['page'] = 'home';
+        $data['data'] = $id ==="elastic" ? array_slice($response, ($page - 1) * $perPage, $perPage)['aggregations']['group_by_hour']['buckets'] : array_slice($response, ($page - 1) * $perPage, $perPage); 
+        $data['pager'] = $this->pagers->makeLinks($page, $perPage, $total); 
+        echo view('/inc/template', $data);
+    }
+    public function overallReport($id){
+        $page = $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1; 
+        $perPage = 10; 
+        $data['id']= $id;
+        // Number of records per page 
+        $ch = curl_init(); 
+        $url =  $id==="mysql" ? 'http://localhost:3000/mySql/AllData' : ($id==="mongo" ?'http://localhost:3001/mongo/alldata' : ($id === "elastic" ?"localhost:3002/elasticsearch/alldata": '')) ; 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+        curl_setopt($ch, CURLOPT_URL, $url); 
+        $response = json_decode(curl_exec($ch), true); 
+        $total = count($response); 
+        $data['page'] = 'overall_report_page';
+        $data['data'] = $id ==="elastic" ? array_slice($response, ($page - 1) * $perPage, $perPage) : array_slice($response, ($page - 1) * $perPage, $perPage); 
+        $data['pager'] = $this->pagers->makeLinks($page, $perPage, $total); 
+        echo view('/inc/template', $data);
     }
 }
