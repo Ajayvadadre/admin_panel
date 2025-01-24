@@ -351,6 +351,8 @@
                                     <span class="input-group-text" style="cursor:pointer" id="sendBtn"><i class="fa fa-send"></i></span>
                                 </div>
                                 <input type="text" id="textField" class="form-control" placeholder="Enter text here...">
+                                <div class="right"></div>
+                                <div class="left"></div>
                             </div>
                         </div>
                     </div>
@@ -401,7 +403,10 @@
                 reciver = x.getAttribute('data-username');
                 console.log(reciver);
                 reciverHeading.innerText = reciver
-                socket.emit('join', {sender,reciver});
+                socket.emit('join', {
+                    sender,
+                    reciver
+                });
                 return reciver;
             });
         });
@@ -426,36 +431,39 @@
             }
         })
         //Socket listener 
-        socket.on('recievedMessage', function(msg) {
-            var item = document.createElement('div');
-            item.innerHTML = `<div class="message other-message float-right mt-2" id="show-message">${msg}</div>`;
-            messageField.appendChild(item);
-            window.scrollTo(0, document.body.scrollHeight);
-        });
+        // socket.on('recievedMessage', function(msg) {
+        //     var item = document.createElement('div');
+        //     item.innerHTML = `<div class="message other-message float-right mt-2" id="show-message">${msg}</div>`;
+        //     messageField.appendChild(item);
+        //     window.scrollTo(0, document.body.scrollHeight);
+        // });
 
         //private message reciever 
         socket.on("private message", ({
-            message,
+            message,        
             from
         }) => {
-            console.log("Client side private msg: " + message + " " + from)
-            var item = document.createElement('div');
-            item.innerHTML = `   <li class="clearfix">
-                <div class="message-data mt-2">
-                    <span class="message-data-time">${from}</span>
-                </div>
-                <div class="message my-message">${message}</div>
-            </li>`;
-            messageField.appendChild(item);
-            window.scrollTo(0, document.body.scrollHeight);
+            const chatHistory = document.getElementById('messageField');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${message.sender === username ? 'sender-message' : 'receiver-message'}`;
+            messageDiv.textContent = message.message;
+            chatHistory.appendChild(messageDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
         });
 
         // Room message listener
-        socket.on('roomMessage',()=>{
-            
-        })
+        socket.on('previousMessages', (messages) => {
+            const chatHistory = document.getElementById('messageField');
+            chatHistory.innerHTML = '';
 
-
+            messages.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${msg.sender === username ? 'sender-message' : 'receiver-message'}`;
+                messageDiv.textContent = msg.message;
+                chatHistory.appendChild(messageDiv);
+            });
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        });
     </script>
 </body>
 

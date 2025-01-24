@@ -49,3 +49,5 @@ $routes->get('/ExportData','Home::exportData');
 $routes->get('/HourlyReport/(:any)','Home::logger_report/$1');
 //--Overall data--
 $routes->get('/Overallreport/(:any)','Home::overallReport/$1');
+$routes->get('/ExportOverallData/(:any)','Home::overallReport/$1');
+$routes->get('/userState','Home::userState');

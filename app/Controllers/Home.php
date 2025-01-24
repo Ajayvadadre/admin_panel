@@ -15,10 +15,10 @@ class Home extends BaseController
 
     public function __construct()
     {
-        helper(['url']); 
+        helper(['url']);
         $this->pagers = \Config\Services::pager();
 
-        
+
         $this->campaign = new CampaginModel();
         $this->user = new UserModel();
         $this->accessLevel = new AccessLevel();
@@ -78,7 +78,6 @@ class Home extends BaseController
         echo view('inc/header');
         echo view('mongodata', $data);
         echo view('inc/footer');
-
     }
     public function createCampaign()
     {
@@ -269,45 +268,77 @@ class Home extends BaseController
         curl_setopt($ch, CURLOPT_URL, $url);
         $response = json_decode(curl_exec($ch), true);
         $file = fopen('php://output', 'w');
-        $header = ["hours", "call count", "Total duration" ,"Total hold" ,"Total Mute" ,"total Ringing" ,"Total transfer" ,"Total onCall" ,"Total conferenace"];
+        $header = ["hours", "call count", "Total duration", "Total hold", "Total Mute", "total Ringing", "Total transfer", "Total onCall", "Total conferenace"];
         fputcsv($file, $header);
         foreach ($response as $key => $line) {
             fputcsv($file, $line);
         }
         fclose($file);
-        exit;   
+        exit;
     }
 
-    public function logger_report($id){ 
-        $page = $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1; 
-        $perPage = 10; 
-        $data['id']= $id;
+    
+    public function exportUserSummaryData($id)
+    {
+        $filename = 'users_data' . '.csv';
+        $id = $this->request->
+        header("Content-Description: File Transfer");
+        header("Content-Disposition: attachment; filename=$filename");
+        header("Content-Type: application/csv; ");
+
+        // get data 
+        $ch = curl_init();
+        $url =  $id === "mysql" ? 'http://localhost:3000/mySql/summerisedata' : ($id === "mongo" ? 'http://localhost:3001/mongo/summarydata' : ($id === "elastic" ? "localhost:3002/elastic/summary" : ''));
+        // $url = 'http://localhost:3000/mySql/summerisedata';
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $response = json_decode(curl_exec($ch), true);
+        $file = fopen('php://output', 'w');
+        $header = ["datetime",    "type",    "disposetype",    "disposename",    "duration",    "agentname",    "campaignName",    "processName",    "leadset",    "referenceUuid",    "customerUuid",    "hold",    "mute",    "ringing",    "transfer",    "conference",    "oncall",    "disposetime"];
+        fputcsv($file, $header);
+        foreach ($response as $key => $line) {
+            fputcsv($file, $line);
+        }
+        fclose($file);
+        exit;
+    }
+    public function logger_report($id)
+    {
+        $page = $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1;
+        $perPage = 10;
+        $data['id'] = $id;
         // Number of records per page 
-        $ch = curl_init(); 
-        $url =  $id==="mysql" ? 'http://localhost:3000/mySql/summerisedata' : ($id==="mongo" ?'http://localhost:3001/mongo/summarydata' : ($id === "elastic" ?"localhost:3002/elastic/summary": '')) ; 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-        curl_setopt($ch, CURLOPT_URL, $url); 
-        $response = json_decode(curl_exec($ch), true); 
-        $total = count($response); 
+        $ch = curl_init();
+        $url =  $id === "mysql" ? 'http://localhost:3000/mySql/summerisedata' : ($id === "mongo" ? 'http://localhost:3001/mongo/summarydata' : ($id === "elastic" ? "localhost:3002/elastic/summary" : ''));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $response = json_decode(curl_exec($ch), true);
+        $total = count($response);
         $data['page'] = 'home';
-        $data['data'] = $id ==="elastic" ? array_slice($response, ($page - 1) * $perPage, $perPage)['aggregations']['group_by_hour']['buckets'] : array_slice($response, ($page - 1) * $perPage, $perPage); 
-        $data['pager'] = $this->pagers->makeLinks($page, $perPage, $total); 
+        $data['data'] = $id === "elastic" ? array_slice($response, ($page - 1) * $perPage, $perPage)['aggregations']['group_by_hour']['buckets'] : array_slice($response, ($page - 1) * $perPage, $perPage);
+        $data['pager'] = $this->pagers->makeLinks($page, $perPage, $total);
         echo view('/inc/template', $data);
     }
-    public function overallReport($id){
-        $page = $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1; 
-        $perPage = 10; 
-        $data['id']= $id;
+    public function overallReport($id)
+    {
+        $page = $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1;
+        $perPage = 10;
+        $data['id'] = $id;
         // Number of records per page 
-        $ch = curl_init(); 
-        $url =  $id==="mysql" ? 'http://localhost:3000/mySql/AllData' : ($id==="mongo" ?'http://localhost:3001/mongo/alldata' : ($id === "elastic" ?"localhost:3002/elasticsearch/alldata": '')) ; 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-        curl_setopt($ch, CURLOPT_URL, $url); 
-        $response = json_decode(curl_exec($ch), true); 
-        $total = count($response); 
+        $ch = curl_init();
+        $url =  $id === "mysql" ? 'http://localhost:3000/mySql/AllData' : ($id === "mongo" ? 'http://localhost:3001/mongo/alldata' : ($id === "elastic" ? "localhost:3002/elasticsearch/alldata" : ''));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $response = json_decode(curl_exec($ch), true);
+        $total = count($response);
         $data['page'] = 'overall_report_page';
-        $data['data'] = $id ==="elastic" ? array_slice($response, ($page - 1) * $perPage, $perPage) : array_slice($response, ($page - 1) * $perPage, $perPage); 
-        $data['pager'] = $this->pagers->makeLinks($page, $perPage, $total); 
+        $data['data'] = $id === "elastic" ? array_slice($response, ($page - 1) * $perPage, $perPage) : array_slice($response, ($page - 1) * $perPage, $perPage);
+        $data['pager'] = $this->pagers->makeLinks($page, $perPage, $total);
         echo view('/inc/template', $data);
+    }
+    public function userState()
+    {
+        $data['page'] = '/agentdashboard/agent_state_page';
+        return view('/inc/template',$data);
     }
 }

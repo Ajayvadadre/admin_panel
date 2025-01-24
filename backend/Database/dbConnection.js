@@ -23,4 +23,4 @@ async function connectDB() {
   }
 }
 
-module.exports = {connectDB,client,db};
+module.exports = {connectDB};
